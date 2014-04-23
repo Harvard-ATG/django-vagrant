@@ -47,12 +47,20 @@ class djangoapp {
 		logoutput => true,
 	}
 
+	# update application from git
+	exec { 'git-pull':
+		command => "git pull",
+		cwd => "$PROJ_DIR",
+		require => Exec['git-clone'],
+		logoutput => true,
+	}
+
 	# install project dependencies
 	exec { "pip-install-requirements":
 		command => "sudo /usr/bin/pip install -r $PROJ_DIR/requirements.txt",
 		tries => 2,
 		timeout => 600,
-		require => [Package['python-pip', 'python-dev'],Exec['git-clone']],
+		require => [Package['python-pip', 'python-dev'],Exec['git-pull']],
 		logoutput => true,
 	}
 
